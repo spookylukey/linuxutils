@@ -101,6 +101,12 @@ if [ -f $MYSQL_APPARMOR_PROFILE ]; then
     apparmor_parser -a $MYSQL_APPARMOR_PROFILE
 fi
 
+# Create a user that can create databases, for Django test suite
+sleep 5
+SQL="CREATE DATABASE IF NOT EXISTS djangotests; GRANT USAGE ON *.* TO tester@localhost IDENTIFIED BY 'password'; GRANT ALL PRIVILEGES ON djangotests.* TO tester@localhost; FLUSH PRIVILEGES;"
+mysql --port=3307 --host=127.0.0.1 -e "$SQL"
+
+
 # Wait for the MySQL background process to end.
 wait
 
